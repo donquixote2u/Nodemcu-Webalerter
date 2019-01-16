@@ -1,5 +1,6 @@
 -- accept data via webserver GET, display on web and screen
 --manifest: checkwifi.lua, screen.lua, webface.lua, webserverlua
+--new manifest: screen.lua,connectIP.lua, ide.lua, wificredentials.lua
 -- Constants
 SSID    = "98FM"
 APPWD   = "potentiometer"
