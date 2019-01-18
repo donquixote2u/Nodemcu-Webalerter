@@ -4,7 +4,7 @@ PAGETITLE="ESP8266 Web Server"
 dofile("screen.lua")
 init_display() -- set up display screen ready to show data
 -- refresh screen every 10 secs
-tmr.alarm( 2 , 10000 , 1 ,  function() display_data(); end)
+-- tmr.alarm( 2 , 10000 , 1 ,  function() display_data(); end)
 print("starting webserver") 
 srv=net.createServer(net.TCP)
 srv:listen(80,function(conn)
@@ -12,14 +12,13 @@ srv:listen(80,function(conn)
     local buf= "<h1>"..PAGETITLE.."</h1>"
     getVars(client,request)
     for k, v in pairs(_GET) do
-    -- see if received url args have matching ts field # 
-	if FX[k]~=nil then -- if field in field index table, display it
 		buf = buf.."<p>"..k.." : "..v.."</p>"
-	end	
-   end
+    end
+   print("buffer="..buf) 
    client:send(buf)
-   client:close()
+   -- client:close()
    collectgarbage()
+   display_data()
    end)
 end)
 end
@@ -52,18 +51,11 @@ local _, _, method, path, vars = string.find(request, "([A-Z]+) (.+)?(.+) HTTP")
     end    
 end 
 
-function checkConn()    -- wait for internet
- if(CONNECTED) then
-    tmr.stop(2)
-    require("ide") -- once connected, start server
- else
-    tmr.alarm( 2, 2000, 0, checkConn)
- end
-end
-
 -- STARTS HERE --
-_GET={} -- GET params received by web server OR console
-tmr.alarm( 1 , 3000, 0 , function() require("connectIP") end )
-tmr.alarm( 2 , 5000, 0 , checkConn )
-tmr.alarm( 2 , 800 , 0 ,  function() init_webserver(); end)
-  
+print("webalerter started")
+_GET={} -- GET params received by web server OR 
+require("WifiConnect")
+wifiTrys     = 0      -- reset counter of trys to connect to wifi
+NUMWIFITRYS  = 20    -- Maximum number of WIFI Testings while waiting for connection
+initTimeout=2000       -- // timer in ms
+initTimer:alarm(initTimeout,tmr.ALARM_SINGLE,function() checkConnection(init_webserver) end) 

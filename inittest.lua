@@ -2,12 +2,10 @@
 --manifest: checkwifi.lua, screen.lua, webface.lua, webserverlua
 --new manifest: screen.lua,connectIP.lua, ide.lua, wificredentials.lua
 -- Constants
-SSID    = "98FM"
-APPWD   = "potentiometer"
+require("wificredentials")
 -- Some control variables
-wifiTrys     = 0      -- Counter of trys to connect to wifi
-NUMWIFITRYS  = 200    -- Maximum number of WIFI Testings while waiting for connection
-tmr.alarm( 1 , 2500 , 0 , function() dofile("webalerter.lua") end )
+initTimeout=5000       -- // timer in ms
+initTimer=tmr.create()  -- // start timer
+initTimer:alarm(initTimeout,tmr.ALARM_SINGLE,function() dofile("webalerter.lua") end)
 -- Call main control pgm after timeout
 -- Drop through here to let NodeMcu run
-

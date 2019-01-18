@@ -1,15 +1,20 @@
-function connectIP()
-  CONNECTED = false   -- reset wifi connect attempt status  
+function checkConnection(cb) 
   if ( wifiTrys > NUMWIFITRYS ) then
     print("Sorry. Not able to connect")
   else
     ipAddr = wifi.sta.getip()
     if ( ( ipAddr == nil ) or ( ipAddr == "0.0.0.0" ) )then
      -- Reset alarm again
-      tmr.alarm( 1 , 2000 , 0 , connectIP)
+       print("no connection; "..wifiTrys.." tries")
+      wifiTimeout=5000
+      wifiTimer:alarm(wifiTimeout,tmr.ALARM_SINGLE, function() checkConnection(cb) end)
       print("Configuring WIFI....")
       wifi.setmode( wifi.STATION )
-      wifi.sta.config( SSID , APPWD)
+      station_cfg={}
+      station_cfg.ssid=SSID
+      station_cfg.pwd=APPWD
+      station_cfg.save=false
+      wifi.sta.config(station_cfg)
       wifi.sleeptype(wifi.MODEM_SLEEP)
       print("Checking WIFI..." .. wifiTrys)
       wifiTrys = wifiTrys + 1
@@ -17,13 +22,10 @@ function connectIP()
      print("Wifi STA connected. IP:")
      print(wifi.sta.getip())
      wifiTrys=0
-     tmr.stop(1)
-     CONNECTED = true   -- set wifi connect attempt status
+     return cb()           -- when connected, run callback
     end
   end
 end
 -- Wifi initialisation
-wifiTrys     = 0      -- Counter of trys to connect to wifi
-tmr.alarm( 1 , 50, 0 , connectIP)
+wifiTimer=tmr.create()  -- // detect button bounce
 
-  
