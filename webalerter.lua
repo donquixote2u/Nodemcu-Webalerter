@@ -18,8 +18,9 @@ srv:listen(80,function(conn)
    client:send(buf)
    collectgarbage()
    display_data()
-   end)
-end)
+   closeTimer:alarm(initTimeout,tmr.ALARM_SINGLE,function() client:close() end)
+   end)     -- end receive
+end)        -- end listen
 end
 --   UPDATE SCREEN WITH DATA
 function display_data()
@@ -57,4 +58,5 @@ require("WifiConnect")
 wifiTrys     = 0      -- reset counter of trys to connect to wifi
 NUMWIFITRYS  = 20    -- Maximum number of WIFI Testings while waiting for connection
 initTimeout=2000       -- // timer in ms
+closeTimer=tmr.create()  -- // delay before close
 initTimer:alarm(initTimeout,tmr.ALARM_SINGLE,function() checkConnection(init_webserver) end) 
