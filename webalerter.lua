@@ -1,6 +1,6 @@
 -- version 2 of webserver; accepts any GET var, displays
 function init_webserver()
-PAGETITLE="ESP8266 Web Server"
+PAGETITLE="MESSAGES"
 dofile("screen.lua")
 init_display() -- set up display screen ready to show data
 -- refresh screen every 10 secs
@@ -16,7 +16,6 @@ srv:listen(80,function(conn)
     end
    print("buffer="..buf) 
    client:send(buf)
-   -- client:close()
    collectgarbage()
    display_data()
    end)
